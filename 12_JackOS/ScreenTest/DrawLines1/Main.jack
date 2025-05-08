@@ -1,0 +1,44 @@
+class Main {
+	static int step, left, top, right, bottom;
+	function void main(){
+		var int dx, dy;
+
+		do Screen.setColor(true);
+
+		let dy = 0;
+		while (dy < 10){
+			let dx = 0;
+			while (dx < 10){
+				do Screen.drawLine(100 + (dx * 10), 10 + (dy * 10), 100 + (dx * 10) + dx, 10 + (dy * 10) + dy); // 1 1
+				do Screen.drawLine(220 + (dx * 10) + dx, 120 + (dy * 10) + dy, 220 + (dx * 10), 120 + (dy * 10));   // -1 -1
+				do Screen.drawLine(220 + (dx * 10) + dx, 10 + (dy * 10), 220 + (dx * 10), 10 + (dy * 10) + dy); // -1 1
+				do Screen.drawLine(100 + (dx * 10), 120 + (dy * 10) + dy, 100 + (dx * 10) + dx, 120 + (dy * 10));   // 1 -1
+				let dx = dx + 1;
+			}
+			let dy = dy + 1;
+		}        
+
+		return;
+
+		// do Output.moveCursor(4, 4);
+		// do Output.printString("dx > 0");
+		// do Output.moveCursor(5, 4);
+		// do Output.printString("dy > 0");
+
+		// do Output.moveCursor(4, 42);
+		// do Output.printString("dx < 0");
+		// do Output.moveCursor(5, 42);
+		// do Output.printString("dy > 0");
+
+		// do Output.moveCursor(14, 4);
+		// do Output.printString("dx > 0");
+		// do Output.moveCursor(15, 4);
+		// do Output.printString("dy < 0");
+
+		// do Output.moveCursor(14, 42);
+		// do Output.printString("dx < 0");
+		// do Output.moveCursor(15, 42);
+		// do Output.printString("dy < 0");
+		// return;
+	}
+}

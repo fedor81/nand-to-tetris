@@ -1,0 +1,31 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux8Way16.hdl
+
+/**
+ * 8-way 16-bit multiplexor:
+ * out = a if sel == 000
+ *       b if sel == 001
+ *       etc.
+ *       h if sel == 111
+ */
+
+CHIP Mux8Way16 {
+    IN a[16], b[16], c[16], d[16],
+       e[16], f[16], g[16], h[16],
+       sel[3];
+    OUT out[16];
+
+    PARTS:
+    Not(in=sel[0], out=notS0);
+
+    Mux4Way16(a=a, b=c, c=e, d=g, sel=sel[1..2], out=muxABCD);
+    Mux4Way16(a=b, b=d, c=f, d=h, sel=sel[1..2], out=muxEFGH);
+	Nand16(a=muxABCD, b[0]=notS0, b[1]=notS0, b[2]=notS0, b[3]=notS0, b[4]=notS0, b[5]=notS0, b[6]=notS0, b[7]=notS0, b[8]=notS0, b[9]=notS0, b[10]=notS0, b[11]=notS0, b[12]=notS0, b[13]=notS0, b[14]=notS0, b[15]=notS0,
+		out=temp1);
+	Nand16(a=muxEFGH, b[0]=sel[0], b[1]=sel[0], b[2]=sel[0], b[3]=sel[0], b[4]=sel[0], b[5]=sel[0], b[6]=sel[0], b[7]=sel[0], b[8]=sel[0], b[9]=sel[0], b[10]=sel[0], b[11]=sel[0], b[12]=sel[0], b[13]=sel[0], b[14]=sel[0], b[15]=sel[0],
+		out=temp2);
+
+	Nand16(a=temp1, b=temp2, out=out);
+}

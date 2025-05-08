@@ -1,0 +1,32 @@
+class Main {
+    static int step, left, top, right, bottom;
+    function void main() {
+        let step = 32;
+        let left = 256-64;
+        let top = 128-64;
+        let right = 256+64;
+        let bottom = 128+64;
+        do Screen.setColor(-1);
+        do Main.drawLines(left, top, right, top, 0, step);
+        do Main.drawLines(left, top, left, bottom, step, 0);
+
+        do Main.drawLines(right, top, left, top, 0, step);
+        do Main.drawLines(right, top, left, bottom, step, 0);
+
+        do Main.drawLines(left, bottom, right, top, 0, step);
+        do Main.drawLines(left, bottom, left, top, step, 0);
+
+        do Main.drawLines(right, bottom, left, top, 0, step);
+        do Main.drawLines(right, bottom, left, top, step, 0);
+        return;
+    }
+
+    function void drawLines(int ox, int oy, int x1, int y1, int dx, int dy){
+        while ((x1 < (right+1)) & (y1 < (bottom+1))){
+            do Screen.drawLine(ox, oy, x1, y1);
+            let x1 = x1 + dx;
+            let y1 = y1 + dy;
+        }
+        return;
+    }
+}

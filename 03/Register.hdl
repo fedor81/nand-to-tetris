@@ -1,0 +1,36 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/03/a/Register.hdl
+
+/**
+ * 16-bit register:
+ * If load[t] == 1 then out[t+1] = temp[t]
+ * else out does not change
+ */
+
+CHIP Register {
+    IN in[16], load;
+    OUT out[16];
+
+    PARTS:
+    Mux16(a[0]=previousValue0, a[1]=previousValue1, a[2]=previousValue2, a[3]=previousValue3, a[4]=previousValue4, a[5]=previousValue5, a[6]=previousValue6, a[7]=previousValue7, a[8]=previousValue8, a[9]=previousValue9, a[10]=previousValue10, a[11]=previousValue11, a[12]=previousValue12, a[13]=previousValue13, a[14]=previousValue14, a[15]=previousValue15,
+    b=in, sel=load, out[0]=temp0, out[1]=temp1, out[2]=temp2, out[3]=temp3, out[4]=temp4, out[5]=temp5, out[6]=temp6, out[7]=temp7, out[8]=temp8, out[9]=temp9, out[10]=temp10, out[11]=temp11, out[12]=temp12, out[13]=temp13, out[14]=temp14, out[15]=temp15);
+
+    DFF(in=temp0, out=out[0], out=previousValue0);
+    DFF(in=temp1, out=out[1], out=previousValue1);
+    DFF(in=temp2, out=out[2], out=previousValue2);
+    DFF(in=temp3, out=out[3], out=previousValue3);
+    DFF(in=temp4, out=out[4], out=previousValue4);
+    DFF(in=temp5, out=out[5], out=previousValue5);
+    DFF(in=temp6, out=out[6], out=previousValue6);
+    DFF(in=temp7, out=out[7], out=previousValue7);
+    DFF(in=temp8, out=out[8], out=previousValue8);
+    DFF(in=temp9, out=out[9], out=previousValue9);
+    DFF(in=temp10, out=out[10], out=previousValue10);
+    DFF(in=temp11, out=out[11], out=previousValue11);
+    DFF(in=temp12, out=out[12], out=previousValue12);
+    DFF(in=temp13, out=out[13], out=previousValue13);
+    DFF(in=temp14, out=out[14], out=previousValue14);
+    DFF(in=temp15, out=out[15], out=previousValue15);
+}

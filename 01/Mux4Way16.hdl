@@ -1,0 +1,40 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux4Way16.hdl
+
+/**
+ * 4-way 16-bit multiplexor:
+ * out = a if sel == 00
+ *       b if sel == 01
+ *       c if sel == 10
+ *       d if sel == 11
+ */
+
+
+CHIP Mux4Way16 {
+	IN a[16], b[16], c[16], d[16], sel[2];
+	OUT out[16];
+
+	PARTS:
+	Not(in=sel[0], out=notS0);
+	Not(in=sel[1], out=notS1);
+	
+	Nand16(a=a, b[0]=notS1, b[1]=notS1, b[2]=notS1, b[3]=notS1, b[4]=notS1, b[5]=notS1, b[6]=notS1, b[7]=notS1, b[8]=notS1, b[9]=notS1, b[10]=notS1, b[11]=notS1, b[12]=notS1, b[13]=notS1, b[14]=notS1, b[15]=notS1,
+		out=aNandNotS1);
+	Nand16(a=c, b[0]=sel[1], b[1]=sel[1], b[2]=sel[1], b[3]=sel[1], b[4]=sel[1], b[5]=sel[1], b[6]=sel[1], b[7]=sel[1], b[8]=sel[1], b[9]=sel[1], b[10]=sel[1], b[11]=sel[1], b[12]=sel[1], b[13]=sel[1], b[14]=sel[1], b[15]=sel[1],
+		out=cNandS1);
+	Nand16(a=aNandNotS1, b=cNandS1, out=aAndNotS1OrCAndS1);
+	Nand16(a=aAndNotS1OrCAndS1, b[0]=notS0, b[1]=notS0, b[2]=notS0, b[3]=notS0, b[4]=notS0, b[5]=notS0, b[6]=notS0, b[7]=notS0, b[8]=notS0, b[9]=notS0, b[10]=notS0, b[11]=notS0, b[12]=notS0, b[13]=notS0, b[14]=notS0, b[15]=notS0,
+		out=temp1);
+
+	Nand16(a=b, b[0]=notS1, b[1]=notS1, b[2]=notS1, b[3]=notS1, b[4]=notS1, b[5]=notS1, b[6]=notS1, b[7]=notS1, b[8]=notS1, b[9]=notS1, b[10]=notS1, b[11]=notS1, b[12]=notS1, b[13]=notS1, b[14]=notS1, b[15]=notS1,
+		out=bNandNotS1);
+	Nand16(a=d, b[0]=sel[1], b[1]=sel[1], b[2]=sel[1], b[3]=sel[1], b[4]=sel[1], b[5]=sel[1], b[6]=sel[1], b[7]=sel[1], b[8]=sel[1], b[9]=sel[1], b[10]=sel[1], b[11]=sel[1], b[12]=sel[1], b[13]=sel[1], b[14]=sel[1], b[15]=sel[1],
+		out=dNandS1);
+	Nand16(a=bNandNotS1, b=dNandS1, out=bAndNotS1OrDAndS1);
+	Nand16(a=bAndNotS1OrDAndS1, b[0]=sel[0], b[1]=sel[0], b[2]=sel[0], b[3]=sel[0], b[4]=sel[0], b[5]=sel[0], b[6]=sel[0], b[7]=sel[0], b[8]=sel[0], b[9]=sel[0], b[10]=sel[0], b[11]=sel[0], b[12]=sel[0], b[13]=sel[0], b[14]=sel[0], b[15]=sel[0],
+		out=temp2);
+
+	Nand16(a=temp1, b=temp2, out=out);
+}

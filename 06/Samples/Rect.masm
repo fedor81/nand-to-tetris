@@ -1,0 +1,15 @@
+D=M[0]
+JLE[INFINITE_LOOP]
+M[counter]=D
+D=A[SCREEN]
+M[address]=D
+(LOOP)
+A=M[address]
+M=-1
+D=M[address]
+D=D+A[32]
+M[address]=D
+MD=M[counter]-1
+JGT[LOOP]
+(INFINITE_LOOP)
+JMP[INFINITE_LOOP]

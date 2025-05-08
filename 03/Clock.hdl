@@ -1,0 +1,43 @@
+/*
+* На вход подается 16-битное число period и флаг сброса часов reset.
+
+* У чипа два выхода:
+* 1. ticks (0 ≤ ticks < period) — сколько тиков прошло с начала периода,
+* 2. loop — равен единице, когда ticks равен нулю.
+* 
+* Если предыдущее значение ticks оказывается за пределами корректных 
+* значений (из-за уменьшения period), нужно вернуть ticks=0, loop=1
+*/
+CHIP Clock {
+    IN period[16], reset;
+    OUT ticks[16], loop;
+
+    PARTS:
+    // Increment
+    Inc16(in=reg, out=incReg);
+    
+    // period - incReg
+    Not16(in=period, out=notPeriod);
+    Add16(a=notPeriod, b=incReg, out=notPeriodAddIncReg);
+    Not16(in=notPeriodAddIncReg, out=subtract, out[15]=negative);
+
+    // Установим флаг notZR, если subtract != 0
+    Or16Way(in=subtract, out=notZR);
+
+    Not(in=negative, out=notNG);
+    Not(in=reset, out=notReset);
+
+    // Зануление при zr, negative или reset = 1
+    And(a=notZR, b=notNG, out=temp);
+    And(a=temp, b=notReset, out=regToZero);
+
+    And16(a[0]=regToZero, a[1]=regToZero, a[2]=regToZero, a[3]=regToZero, a[4]=regToZero, a[5]=regToZero,
+        a[6]=regToZero, a[7]=regToZero, a[8]=regToZero, a[9]=regToZero, a[10]=regToZero, a[11]=regToZero,
+        a[12]=regToZero, a[13]=regToZero, a[14]=regToZero, a[15]=regToZero, b=incReg, out=newValue);
+
+    Register(in=newValue, load=true, out=reg, out=ticks);
+
+    // Установка флага loop
+    Or16Way(in=reg, out=temp2);
+    Not(in=temp2, out=loop);
+}

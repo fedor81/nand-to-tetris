@@ -1,0 +1,66 @@
+CHIP Memory24K {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    // Если address[14] = 0, адресуем память
+    // Если address[14] = 1 и address[13] = 0, то Screen 
+    // Если address[14] = address[13] = 1 и address[0..12] = 0, то адресуем клавиатуру
+    // Если address[14] = address[13] = address[12] = 1  то адресуем RAM42
+    // Если address[14] = address[13] и address[12] = 0  то адресуем RAM41
+
+    // Ram16K
+    Not(in=address[14], out=toRam16);
+
+    // Screen
+    Not(in=address[13], out=notAddr13);
+    And(a=address[14], b=notAddr13, out=toScreen);
+
+    // Keyboard
+    And16(a[0..14]=address, a[15]=true, b[0..12]=false, b[13..15]=true, out=temp5);
+    Or16Way(in=temp5, out=toKeyboard);
+
+    // Ram42
+    And(a=address[13], b=address[14], out=temp0);
+    And(a=temp0, b=address[12], out=toRam42);
+
+    // Ram41
+    Not(in=address[12], out=notAddr12);
+    And(a=address[13], b=address[14], out=temp);
+    And(a=temp, b=notAddr12, out=toRam41);
+
+    // Load
+    And(a=toRam41, b=load, out=loadRam41);
+    And(a=toRam42, b=load, out=loadRam42);
+    And(a=toRam16, b=load, out=loadRam16);
+    And(a=toScreen, b=load, out=loadScreen);
+
+    // Чипы
+    RAM16K(in=in, load=loadRam16, address=address[0..13], out=outRam16);
+    Screen(in=in, load=loadScreen, address=address[0..12], out=outScreen);
+    Keyboard(out=outKeyboard);
+    RAM4K(in=in, load=loadRam41, address=address[0..11], out=outRam41);
+    RAM4K(in=in, load=loadRam42, address=address[0..11], out=outRam42);
+
+    // Выборка out
+    And16(a=outKeyboard, b[0]=toKeyboard, b[1]=toKeyboard, b[2]=toKeyboard, b[3]=toKeyboard, b[4]=toKeyboard,
+        b[5]=toKeyboard, b[6]=toKeyboard, b[7]=toKeyboard, b[8]=toKeyboard, b[9]=toKeyboard, b[10]=toKeyboard,
+        b[11]=toKeyboard, b[12]=toKeyboard, b[13]=toKeyboard, b[14]=toKeyboard, b[15]=toKeyboard, out=keyb);
+    And16(a=outRam16, b[0]=toRam16, b[1]=toRam16, b[2]=toRam16, b[3]=toRam16, b[4]=toRam16,
+        b[5]=toRam16, b[6]=toRam16, b[7]=toRam16, b[8]=toRam16, b[9]=toRam16, b[10]=toRam16,
+        b[11]=toRam16, b[12]=toRam16, b[13]=toRam16, b[14]=toRam16, b[15]=toRam16, out=ram16);
+    And16(a=outRam41, b[0]=toRam41, b[1]=toRam41, b[2]=toRam41, b[3]=toRam41, b[4]=toRam41,
+        b[5]=toRam41, b[6]=toRam41, b[7]=toRam41, b[8]=toRam41, b[9]=toRam41, b[10]=toRam41,
+        b[11]=toRam41, b[12]=toRam41, b[13]=toRam41, b[14]=toRam41, b[15]=toRam41, out=ram41);
+    And16(a=outRam42, b[0]=toRam42, b[1]=toRam42, b[2]=toRam42, b[3]=toRam42, b[4]=toRam42,
+        b[5]=toRam42, b[6]=toRam42, b[7]=toRam42, b[8]=toRam42, b[9]=toRam42, b[10]=toRam42,
+        b[11]=toRam42, b[12]=toRam42, b[13]=toRam42, b[14]=toRam42, b[15]=toRam42, out=ram42);
+    And16(a=outScreen, b[0]=toScreen, b[1]=toScreen, b[2]=toScreen, b[3]=toScreen, b[4]=toScreen,
+        b[5]=toScreen, b[6]=toScreen, b[7]=toScreen, b[8]=toScreen, b[9]=toScreen, b[10]=toScreen,
+        b[11]=toScreen, b[12]=toScreen, b[13]=toScreen, b[14]=toScreen, b[15]=toScreen, out=screen);
+
+    Or16(a=keyb, b=ram16, out=temp1);
+    Or16(a=ram41, b=ram42, out=temp2);
+    Or16(a=temp1, b=temp2, out=temp3);
+    Or16(a=temp3, b=screen, out=out);
+}

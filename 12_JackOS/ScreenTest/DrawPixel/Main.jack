@@ -1,0 +1,52 @@
+class Main {
+    
+    function void main() {
+        
+        var int x, y, d, dd, s, areaSize;
+        let s = 6;
+        let areaSize = 32;
+        do Screen.setColor(true);
+        let y = 128-areaSize;
+        while (y < (128+areaSize)){
+            let x = 256-areaSize;
+            while (x < (256+areaSize)){
+                let d = x + y;
+                let dd = 256 + x - y;
+                if ((dd = ((dd/s)*s)) | (d = ((d/s)*s))){
+                    do Screen.drawPixel(x, y);
+                }
+                let x = x + 1;
+            }
+            let y = y + 1;
+        }
+        do Screen.setColor(false);
+        let y = 128-areaSize;
+        while (y < (128+areaSize)){
+            let x = 256-areaSize;
+            while (x < (256+areaSize)){
+                let d = x + y;
+                let dd = 256 + x - y;
+                if ((dd = ((dd/s)*s)) & (d = ((d/s)*s))){
+                    do Screen.drawPixel(x, y);
+                }
+                let x = x + 1;
+            }
+            let y = y + 1;
+        
+        }
+        do Main.checkScreenImage(0);
+        
+        do Screen.clearScreen();
+        do Main.checkScreenImage(1);
+        
+        do Screen.setColor(true);
+        do Screen.clearScreen();
+        do Main.checkScreenImage(2);
+        return;
+    }
+
+    // Tests check Hack screen content when this function is called
+    function void checkScreenImage(int index){
+        return;
+    }
+}

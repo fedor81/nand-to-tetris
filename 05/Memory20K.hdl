@@ -1,0 +1,59 @@
+CHIP Memory20K {
+    IN in[16], load, address[15];
+    OUT out[16];
+
+    PARTS:
+    // Если address[14] = 0, адресуем память
+    // Если address[14] = 1 и address[13] = 0, то Screen 
+    // Если address[14] = address[13] = 1 и address[12] = 0, то адресуем клавиатуру
+    // Иначе адресуем Ram4K
+
+    // Ram16K
+    Not(in=address[14], out=toRam16);
+
+    // Screen
+    Not(in=address[13], out=notAddr13);
+    And(a=address[14], b=notAddr13, out=toScreen);
+
+    // Keyboard
+    Not(in=address[12], out=notAddr12);
+    And(a=address[13], b=address[14], out=temp3);
+    And(a=temp3, b=notAddr12, out=toKeyboard);
+
+    // Ram4K
+    And(a=address[13], b=address[14], out=temp);
+    And(a=temp, b=address[12], out=toRam4);
+
+    // Load
+    And(a=toRam4, b=load, out=loadRam4);
+    And(a=toRam16, b=load, out=loadRam16);
+    And(a=toScreen, b=load, out=loadScreen);
+
+    // Чипы
+    RAM16K(in=in, load=loadRam16, address=address[0..13], out=outRam16);
+    Screen(in=in, load=loadScreen, address=address[0..12], out=outScreen);
+    Keyboard(out=outKeyboard);
+    RAM4K(in=in, load=loadRam4, address=address[0..11], out=outRam4);
+
+    // Выборка out
+    Nand16(a[0]=toKeyboard, a[1]=toKeyboard, a[2]=toKeyboard, a[3]=toKeyboard, a[4]=toKeyboard,
+        a[5]=toKeyboard, a[6]=toKeyboard, a[7]=toKeyboard, a[8]=toKeyboard, a[8]=toKeyboard,
+        a[9]=toKeyboard, a[10]=toKeyboard, a[11]=toKeyboard, a[12]=toKeyboard, a[13]=toKeyboard,
+        a[14]=toKeyboard, a[15]=toKeyboard, b=outKeyboard, out=toKeyNandOutKey);
+    Nand16(a[0]=toScreen, a[1]=toScreen, a[2]=toScreen, a[3]=toScreen, a[4]=toScreen,
+        a[5]=toScreen, a[6]=toScreen, a[7]=toScreen, a[8]=toScreen, a[8]=toScreen,
+        a[9]=toScreen, a[10]=toScreen, a[11]=toScreen, a[12]=toScreen, a[13]=toScreen,
+        a[14]=toScreen, a[15]=toScreen, b=outScreen, out=toScrNandOutScr);
+    Nand16(a[0]=toRam16, a[1]=toRam16, a[2]=toRam16, a[3]=toRam16, a[4]=toRam16,
+        a[5]=toRam16, a[6]=toRam16, a[7]=toRam16, a[8]=toRam16, a[8]=toRam16,
+        a[9]=toRam16, a[10]=toRam16, a[11]=toRam16, a[12]=toRam16, a[13]=toRam16,
+        a[14]=toRam16, a[15]=toRam16, b=outRam16, out=toRam16NandOutRam16);
+    Nand16(a[0]=toRam4, a[1]=toRam4, a[2]=toRam4, a[3]=toRam4, a[4]=toRam4,
+        a[5]=toRam4, a[6]=toRam4, a[7]=toRam4, a[8]=toRam4, a[8]=toRam4,
+        a[9]=toRam4, a[10]=toRam4, a[11]=toRam4, a[12]=toRam4, a[13]=toRam4,
+        a[14]=toRam4, a[15]=toRam4, b=outRam4, out=toRam4NandOutRam4);
+
+    And16(a=toRam16NandOutRam16, b=toScrNandOutScr, out=temp0);
+    And16(a=toKeyNandOutKey, b=toRam4NandOutRam4, out=temp1);
+    Nand16(a=temp0, b=temp1, out=out);
+}

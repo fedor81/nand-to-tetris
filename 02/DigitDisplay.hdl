@@ -1,0 +1,30 @@
+// 7-segments digit display
+//    a
+//   ---
+// f| g |b
+//   ---
+// e|   |c
+//   ---
+//    d
+CHIP DigitDisplay {
+    IN in[4];
+    OUT a, b, c, d, e, f, g;
+    PARTS:
+    //   | 0 1 2 3 4 5 6 7 8 9 A b C d E F
+    // --|--------------------------------
+    // a | 1 0 1 1 0 1 1 1 1 1 1 0 1 0 1 1
+    // b | 1 1 1 1 1 0 0 1 1 1 1 0 0 1 0 0
+    // c | 1 1 0 1 1 1 1 1 1 1 1 1 0 1 0 0
+    // d | 1 0 1 1 0 1 1 0 1 1 0 1 1 1 1 0
+    // e | 1 0 1 0 0 0 1 0 1 0 1 1 1 1 1 1
+    // f | 1 0 0 0 1 1 1 0 1 1 1 1 1 0 1 1
+    // g | 0 0 1 1 1 1 1 0 1 1 1 1 0 1 1 1
+
+    Mux16Way(sel=in, a0=true, a1=false, a2=true, a3=true, a4=false, a5=true, a6=true, a7=true, a8=true, a9=true, aa=true, ab=false, ac=true, ad=false, ae=true, af=true, out=a);
+    Mux16Way(sel=in, a0=true, a1=true, a2=true, a3=true, a4=true, a5=false, a6=false, a7=true, a8=true, a9=true, aa=true, ab=false, ac=false, ad=true, ae=false, af=false, out=b);
+    Mux16Way(sel=in, a0=true, a1=true, a2=false, a3=true, a4=true, a5=true, a6=true, a7=true, a8=true, a9=true, aa=true, ab=true, ac=false, ad=true, ae=false, af=false, out=c);
+    Mux16Way(sel=in, a0=true, a1=false, a2=true, a3=true, a4=false, a5=true, a6=true, a7=false, a8=true, a9=true, aa=false, ab=true, ac=true, ad=true, ae=true, af=false, out=d);
+    Mux16Way(sel=in, a0=true, a1=false, a2=true, a3=false, a4=false, a5=false, a6=true, a7=false, a8=true, a9=false, aa=true, ab=true, ac=true, ad=true, ae=true, af=true, out=e);
+    Mux16Way(sel=in, a0=true, a1=false, a2=false, a3=false, a4=true, a5=true, a6=true, a7=false, a8=true, a9=true, aa=true, ab=true, ac=true, ad=false, ae=true, af=true, out=f);
+    Mux16Way(sel=in, a0=false, a1=false, a2=true, a3=true, a4=true, a5=true, a6=true, a7=false, a8=true, a9=true, aa=true, ab=true, ac=false, ad=true, ae=true, af=true, out=g);
+}

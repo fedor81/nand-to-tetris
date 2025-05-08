@@ -1,0 +1,26 @@
+CHIP LFSR {
+    IN reset;
+    OUT out;
+    PARTS:
+
+    Not(in=reset, out=notReset);
+    
+    // Установка 1-го бита
+    Xor(a=bit3, b=bit4, out=xor);
+    Nand(a=xor, b=notReset, out=temp);
+    Nand(a=temp, b=notReset, out=loadBit1);
+    DFF(in=loadBit1, out=bit1);
+
+    // 2-го бита
+    And(a=bit1, b=notReset, out=loadBit2);
+    DFF(in=loadBit2, out=bit2);
+    
+    // 3-й бит
+    And(a=bit2, b=notReset, out=loadBit3);
+    DFF(in=loadBit3, out=bit3);
+
+    // 4-й бит
+    Nand(a=bit3, b=notReset, out=temp1);
+    Nand(a=temp1, b=notReset, out=loadBit4);
+    DFF(in=loadBit4, out=bit4, out=out);
+}

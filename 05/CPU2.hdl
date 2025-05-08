@@ -1,0 +1,85 @@
+CHIP CPU2 {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write to M? 
+        addressM[15],    // Address in data memory (of M)
+        pc[15];          // address of next instruction
+
+    PARTS:
+    // Если instruction[15] = 1, значит это С-инструкция, иначе это А-инструкция
+
+    // Выборка регистров для сохранения результатов
+    // M = instruction[3] * instruction[15]
+    // D = instruction[4] * instruction[15]
+    // A = instruction[5] + !instruction[15]
+
+    // Флаги загрузки регистров
+    And(a=instruction[15], b=instruction[3], out=loadM);
+    And(a=instruction[15], b=instruction[4], out=tempD);
+    DMux(in=tempD, sel=instruction[14], a=loadD2, b=loadD); // Новый регистр
+    Not(in=instruction[5], out=notInst5);
+    Nand(a=notInst5, b=instruction[15], out=loadA);
+
+    Mux16(a=instruction, b=aluOut, sel=instruction[15], out=muxToA);
+    ARegister(in=muxToA, load=loadA, out=aReg, out[0..14]=addressM);
+    DRegister(in=aluOut, load=loadD, out=dReg);
+    DRegister(in=aluOut, load=loadD2, out=d2Reg);
+
+    // Если это C-инструкция и результат надо сохранить в M, установим флаг writeM
+    And(a=instruction[15], b=loadM, out=writeM);
+
+    // Если instruction[12] = 1, на вход АЛУ подается значение M, в противном случае значение A
+    Mux16(a=aReg, b=inM, sel=instruction[12], out=muxToAlu);
+    
+    // Выборка D или D2
+    Mux16(a=d2Reg, b=dReg, sel=instruction[13], out=dSelReg);
+
+    ALU(x=dSelReg, y=muxToAlu, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8],
+        f=instruction[7], no=instruction[6], zr=zrComp, ng=ngComp, out=outM, out=aluOut);
+    
+    // Переходы
+
+    // JGT = comp > 0 		-	 !zrComp & !ngComp
+    // JEQ = comp = 0 		-	 zrComp
+    // JGE = comp >= 0 		-	 zrComp | !ngComp
+    // JLT = comp < 0 		-	 ngComp
+    // JNE = comp != 0 		-	 !zrComp
+    // JLE = comp <= 0 		-	 zrComp | ngComp
+
+    Not(in=zrComp, out=notZr);
+    Not(in=ngComp, out=notNg);
+    DMux8Way(in=true, sel=instruction[0..2], a=null, b=jgt, c=jeq, d=jge, e=jlt, f=jne, g=jle, h=jmp);
+
+    // part0 = z * (eq + ge + le)
+    Or(a=jeq, b=jge, out=eqORge);
+    Or(a=eqORge, b=jle, out=eqORgeORle);
+    And(a=eqORgeORle, b=zrComp, out=part0);
+
+    // part1 = !n * (gt * !z + ge)
+    Not(in=jge, out=notJge);
+    Nand(a=jgt, b=notZr, out=temp);
+    Nand(a=temp, b=notJge, out=temp0);
+    And(a=notNg, b=temp0, out=part1);
+
+    // part2 = n * (lt + le)
+    Or(a=jlt, b=jle, out=temp1);
+    And(a=temp1, b=ngComp, out=part2);
+
+    // part3 = ne * !z
+    And(a=jne, b=notZr, out=part3);
+
+    // jump = instruction[15] * (part0 + part1 + part2 + part3)
+    Or(a=part0, b=part1, out=temp2);
+    Or(a=part2, b=part3, out=temp3);
+    Or(a=temp2, b=temp3, out=temp4);
+    Or(a=temp4, b=jmp, out=temp5);
+    And(a=temp5, b=instruction[15], out=jump);  // Если это A-инструкция, переход не делать
+
+    PC(in=aReg, load=jump, inc=true, reset=reset, out[0..14]=pc);
+}

@@ -1,0 +1,16 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/SysTest/Main.jack
+
+/** Test program for the OS Sys class. */
+class Main {
+
+    /** Tests the wait method of the Sys class. */
+    function void main() {
+        do Memory.poke(8000, -1);
+        do Sys.wait(1000);
+        do Memory.poke(8000, 255);
+        return;
+    }
+}

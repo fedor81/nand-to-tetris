@@ -1,0 +1,33 @@
+// int sum(int a, int b){
+//     if (a == 0) return b;
+//     return sum(a-1, sum+1);
+// }
+
+function Main.sum 0
+    
+    // if (a > 0) goto TAILREC
+    push argument 0
+    push constant 0
+    gt
+    if-goto TAILREC
+
+    // return b;
+    push argument 1
+    return
+
+    label TAILREC
+    // push a-1
+    push argument 0
+    push constant 1
+    sub
+    
+    // push b+1
+    push argument 1
+    push constant 1
+    add
+    
+    // return sum(a-1, b+1);
+    tailrec Main.sum 2
+    
+    // call Main.sum 2
+    // return

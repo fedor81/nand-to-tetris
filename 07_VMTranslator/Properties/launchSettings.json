@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "VMTranslator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\lomon\\OneDrive - УрФУ\\nand-to-tetris\\07 VM Translator NAND Tetris\\Tests\\FunctionCalls\\NestedCall\\Sys.vm\""
+    }
+  }
+}

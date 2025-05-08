@@ -1,0 +1,15 @@
+class Main {
+    
+    function void main() {
+        var int r, color;
+        let r = 120;
+        let color = -1;
+        while (r > 10) {
+            do Screen.setColor(color);
+            do Screen.drawCircle(256, 128, r);
+            let color = ~color;
+            let r = r - 16;
+        }
+        return;
+    }
+}

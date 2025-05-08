@@ -1,0 +1,24 @@
+CHIP Mux16Way {
+    IN sel[4], a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, aa, ab, ac, ad, ae, af;
+    OUT out;
+    PARTS:
+    Mux(sel=sel[0], a=a0, b=a1, out=a01);
+    Mux(sel=sel[0], a=a2, b=a3, out=a23);
+    Mux(sel=sel[0], a=a4, b=a5, out=a45);
+    Mux(sel=sel[0], a=a6, b=a7, out=a67);
+    Mux(sel=sel[0], a=a8, b=a9, out=a89);
+    Mux(sel=sel[0], a=aa, b=ab, out=aab);
+    Mux(sel=sel[0], a=ac, b=ad, out=acd);
+    Mux(sel=sel[0], a=ae, b=af, out=aef);
+
+    Mux(sel=sel[1], a=a01, b=a23, out=a03);
+    Mux(sel=sel[1], a=a45, b=a67, out=a47);
+    Mux(sel=sel[1], a=a89, b=aab, out=a8b);
+    Mux(sel=sel[1], a=acd, b=aef, out=acf);
+
+    Mux(sel=sel[2], a=a03, b=a47, out=a07);
+    Mux(sel=sel[2], a=a8b, b=acf, out=a8f);
+    
+    Mux(sel=sel[3], a=a07, b=a8f, out=out);
+
+}

@@ -1,0 +1,69 @@
+class Main {
+
+    function void newWithNegativeSize() {
+        var String s;
+        let s = String.new(-1);
+        do s.dispose();
+        return;
+    }
+    
+    function void charAtInvalidIndex1() {
+        var String s;
+        let s = "012";
+        do s.charAt(-1);
+        return;
+    }
+
+    function void charAtInvalidIndex2() {
+        var String s;
+        let s = "012";
+        do s.charAt(3);
+        return;
+    }
+    
+    function void setCharAtInvalidIndex1() {
+        var String s;
+        let s = "012";
+        do s.setCharAt(3, 65);
+        return;
+    }
+
+    function void setCharAtInvalidIndex2() {
+        var String s;
+        let s = "012";
+        do s.setCharAt(-1, 65);
+        return;
+    }
+
+    function void setCharAtInvalidIndex3() {
+        var String s;
+        let s = String.new(128);
+        do s.setCharAt(0, 65);
+        return;
+    }
+
+    function void appendCharExceedStringCapacity(){
+        var String s;
+        let s = String.new(2);
+        do s.appendChar(65);
+        do s.appendChar(66);
+        do s.appendChar(67);
+        return;
+    }
+
+    function void eraseLastCharFromEmptyString(){
+        var String s;
+        let s = "01";
+        do s.eraseLastChar();
+        do s.eraseLastChar();
+        do s.eraseLastChar();
+        return;
+    }
+    
+    function void setIntExceedsCapacity(){
+        var String s;
+        let s = String.new(5);
+        do s.setInt(-12345);
+        return;
+    }
+}

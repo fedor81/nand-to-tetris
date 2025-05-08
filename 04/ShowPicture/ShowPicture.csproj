@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <StartupObject>ShowPicture.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembler">
+      <HintPath>Assembler.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="*.Initial.cs" />
+    <Content Include="*.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="*.mem.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Compile Remove="*.Initial.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <Reference Include="SixLabors.ImageSharp">
+      <HintPath>SixLabors.ImageSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+    
+</Project>

@@ -1,0 +1,13 @@
+/** Test program for the OS Output class. */
+class MemoryLeak {
+    function void main(){
+        var int i;
+        let i = 0;
+        while (i < 3000){
+            do Output.moveCursor(i / 200, i / 200);
+            do Output.printInt(~32767);
+            let i = i + 1;
+        }
+        return;
+    }
+}

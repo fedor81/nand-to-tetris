@@ -1,0 +1,6 @@
+function Sys.init 0
+push constant 10000
+push constant 10000
+call Main.sum 2   // computes 10000 + 10000
+label WHILE
+goto WHILE              // loops infinitely

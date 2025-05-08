@@ -1,0 +1,258 @@
+class Main {
+    static int sizeX, sizeY;
+    static int CROSS, ZERO, NOTHING;
+
+    function void Main(){
+        let NOTHING = 0;
+        let CROSS = 1;
+        let ZERO = 2;
+
+        let sizeX = 169;
+        let sizeY = 84;
+        do Screen.setColor(true);
+
+        do Main.DrawLattice();
+        do Main.DrawNumbers();
+
+        do Main.GameLoop();
+        do Sys.halt();
+        return;
+    }
+
+    function void GameLoop(){
+        var Array board;
+        var int position, move;
+        var boolean crossMove;
+
+        let move = 0;
+        let crossMove = true;
+        let board = Main.AllocBoard();
+
+        while (move < 9){
+            let position = Main.ReadPosition();
+
+            if (board[position - 1] = NOTHING){
+                if (crossMove){
+                    let board[position - 1] = CROSS;
+                    do Main.DrawCross(position);
+
+                    if (Main.CheckWinner(board, CROSS)){
+                        let move = 99;
+                    }
+                } else {
+                    let board[position - 1] = ZERO;
+                    do Main.DrawZero(position);
+
+                    if (Main.CheckWinner(board, ZERO)){
+                        let move = 99;
+                    }
+                }
+
+                let move = move + 1;
+                let crossMove = ~crossMove;
+            }
+        }
+
+        do Main.DeAllocBoard(board);
+        return;
+    }
+
+    function boolean CheckWinner(Array board, int value){
+        // По горизонтали
+        if ((board[0] = board[1]) & (board[1] = board[2]) & (board[0] = value)){
+            return true;
+        }
+        if ((board[3] = board[4]) & (board[4] = board[5]) & (board[3] = value)){
+            return true;
+        }
+        if ((board[6] = board[7]) & (board[7] = board[8]) & (board[6] = value)){
+            return true;
+        }
+
+        // По вертикали
+        if ((board[0] = board[3]) & (board[3] = board[6]) & (board[0] = value)){
+            return true;
+        }
+        if ((board[1] = board[4]) & (board[4] = board[7]) & (board[1] = value)){
+            return true;
+        }
+        if ((board[2] = board[5]) & (board[5] = board[8]) & (board[2] = value)){
+            return true;
+        }
+
+        // По диагонали
+        if ((board[0] = board[4]) & (board[4] = board[8]) & (board[0] = value)){
+            return true;
+        }
+        if ((board[6] = board[4]) & (board[4] = board[2]) & (board[6] = value)){
+            return true;
+        }
+
+        return false;
+    }
+
+    /** В эмуляторе не работало выделение памяти, поэтому эта функция выделяет ее сама */
+    function Array AllocBoard(){
+        var Array board;
+        let board = 4000;   // Некоторый адрес на heap
+        let board[0] = NOTHING;
+        let board[1] = NOTHING;
+        let board[2] = NOTHING;
+        let board[3] = NOTHING;
+        let board[4] = NOTHING;
+        let board[5] = NOTHING;
+        let board[6] = NOTHING;
+        let board[7] = NOTHING;
+        let board[8] = NOTHING;
+        return board;
+    }
+
+    function void DeAllocBoard(Array board){
+        let board[0] = 0;
+        let board[1] = 0;
+        let board[2] = 0;
+        let board[3] = 0;
+        let board[4] = 0;
+        let board[5] = 0;
+        let board[6] = 0;
+        let board[7] = 0;
+        let board[8] = 0;
+        return;
+    }
+
+    /** Читает нажатую клавишу и возвращает позицию от 1 до 9, если нажата соответствующая клавиша */
+    function int ReadPosition(){
+        var int key;
+        let key = Keyboard.keyPressed();
+
+        while ((49 > key) | (key > 57)){
+            let key = Keyboard.keyPressed();
+        }
+
+        while (~(Keyboard.keyPressed() = 0)){
+        }
+        return key - 48;
+    }
+
+    /** НЕ работает в эмуляторе, поэтому скопировал код от сюда в рисующие функции */
+    function Array GetOffsetByPos(int position){
+        var int remainder;
+        var Array offset;
+        let offset = Array.new(3);
+
+        let position = position - 1;
+        let remainder = position;
+
+        // Остаток от деления на 3
+        while (~(remainder < 3)){
+            let remainder = remainder - 3;
+        }
+
+        let offset[0] = remainder * sizeX;
+        let offset[1] = position / 3 * sizeY;
+
+        return offset;
+    }
+
+    /** Рисует крестик на position от 1 до 9 */
+    function void DrawCross(int position){
+        var int remainder, x, y;
+        let position = position - 1;
+        let remainder = position;
+
+        // Остаток от деления на 3
+        while (~(remainder < 3)){
+            let remainder = remainder - 3;
+        }
+
+        let x = remainder * sizeX;
+        let y = position / 3 * sizeY;
+
+        do Screen.drawLine(x + 40, y + 10, x + 140, y + 70);
+        do Screen.drawLine(x + 140, y + 10, x + 40, y + 70);
+
+        let x = x + 1;
+        do Screen.drawLine(x + 40, y + 10, x + 140, y + 70);
+        do Screen.drawLine(x + 140, y + 10, x + 40, y + 70);
+
+        let x = x - 2;
+        do Screen.drawLine(x + 40, y + 10, x + 140, y + 70);
+        do Screen.drawLine(x + 140, y + 10, x + 40, y + 70);
+
+        return;
+    }
+
+    /** Рисует нолик на position от 1 до 9 */
+    function void DrawZero(int position){
+        var int remainder, x, y;
+
+        let position = position - 1;
+        let remainder = position;
+
+        // Остаток от деления на 3
+        while (~(remainder < 3)){
+            let remainder = remainder - 3;
+        }
+
+        let x = remainder * sizeX;
+        let y = position / 3 * sizeY;
+
+        do Screen.drawCircle(x + 85, y + 45, 25);
+        return;
+    }
+
+    /** Рисует сетку на экране */
+    function void DrawLattice(){
+        do Screen.drawLine(sizeX, 0, sizeX, 255);
+        do Screen.drawLine(sizeX, 0, sizeX, 255);
+
+        do Screen.drawLine(sizeX * 2, 0, sizeX * 2, 255);
+        do Screen.drawLine(sizeX * 2, 0, sizeX * 2, 255);
+
+        do Screen.drawLine(0, sizeY, 511, sizeY);
+        do Screen.drawLine(0, sizeY, 511, sizeY);
+
+        do Screen.drawLine(0, sizeY * 2, 511, sizeY * 2);
+        do Screen.drawLine(0, sizeY * 2, 511, sizeY * 2);
+        return;
+    }
+
+    /** Рисует номера клеток */
+    function void DrawNumbers(){
+        var int row1, row2, row3, col1, col2, col3;
+        let row1 = 6;
+        let row2 = 14;
+        let row3 = 22;
+        let col1 = 0;
+        let col2 = 22;
+        let col3 = 43;
+
+        do Output.moveCursor(row1, col1);
+        do Output.printInt(1);
+
+        do Output.moveCursor(row2, col1);
+        do Output.printInt(4);
+
+        do Output.moveCursor(row3, col1);
+        do Output.printInt(7);
+
+        do Output.moveCursor(row1, col2);
+        do Output.printInt(2);
+
+        do Output.moveCursor(row2, col2);
+        do Output.printInt(5);
+
+        do Output.moveCursor(row3, col2);
+        do Output.printInt(8);
+
+        do Output.moveCursor(row1, col3);
+        do Output.printInt(3);
+
+        do Output.moveCursor(row2, col3);
+        do Output.printInt(6);
+
+        do Output.moveCursor(row3, col3);
+        do Output.printInt(9);
+        return;
+    }
+}

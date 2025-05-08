@@ -1,0 +1,44 @@
+/*
+Это контроллер для новогодней гирлянды. 
+У гирлянды есть лампочки четырёх цветов, 
+которыми управляют 4 соответствующих выхода у этого чипа.
+
+Контроллер должен зажигать по одному цвету, 
+и чередовать цвета по порядку, так, чтобы каждый цвет горел 
+delay тиков. 
+
+Вот пример работы чипа:
+
+| time |delay|red|green|blue|yellow|
+| 1    |   1 | 1 |  0  | 0  |  0   |
+| 2    |   1 | 0 |  1  | 0  |  0   |
+| 3    |   2 | 0 |  0  | 1  |  0   |
+| 4    |   2 | 0 |  0  | 1  |  0   |
+| 5    |   2 | 0 |  0  | 0  |  1   |
+| 6    |   2 | 0 |  0  | 0  |  1   |
+| 7    |   2 | 1 |  0  | 0  |  0   |
+| 8    |   2 | 1 |  0  | 0  |  0   |
+| 9    |   2 | 0 |  1  | 0  |  0   |
+| 10   |   2 | 0 |  1  | 0  |  0   |
+...
+*/
+CHIP NYLights {
+    IN delay[16];
+    OUT red, green, blue, yellow;
+
+    PARTS:
+    Clock(period=delay, reset=false, ticks=ticks, loop=loop);
+
+    // Increment
+    // Для первого бита используем HalfAdder
+    HalfAdder(a=loop, b=bit0, sum=load0, carry=carry);
+    // Если carry = bit1 = 1, второй бит будет 0
+    Xor(a=carry, b=bit1, out=load1);
+
+    // Select с помощью двух битов
+    Bit(in=load0, load=true, out=bit0);
+    Bit(in=load1, load=true, out=bit1);
+
+    // Выборка
+    DMux4Way(in=true, sel[0]=bit0, sel[1]=bit1, a=yellow, b=red, c=green, d=blue);
+}
