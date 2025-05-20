@@ -3,6 +3,7 @@ class Main {
     static int CROSS, ZERO, NOTHING;
 
     function void Main(){
+        do Output.init();
         let NOTHING = 0;
         let CROSS = 1;
         let ZERO = 2;
